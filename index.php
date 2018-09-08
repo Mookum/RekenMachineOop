@@ -158,6 +158,9 @@
                     case 4:
                         echo "{$value['id']}) {$value['firstNumber']} : {$value['lastNumber']} = {$value['currentValue']} <br>";
                         break;
+                    case 5:
+                        echo "{$value['id']}) {$value['firstNumber']} ^{$value['lastNumber']} = {$value['currentValue']} <br>";
+                        break;
                 }
             }
             ?>

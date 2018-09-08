@@ -30,7 +30,8 @@ class RekenMachine
         1 => '+',
         2 => '-',
         3 => 'x',
-        4 => '/'
+        4 => '/',
+        5 => 'tot de (macht)'
     );
 
     public function getCalcMultiply() {
@@ -53,23 +54,32 @@ class RekenMachine
         return $result;
     }
 
+    public function getCalcPow() {
+        $result = pow($this->firstNumber, $this->lastNumber);
+        return $result;
+    }
+
     public function setCurrentValue($voter) {
         switch ($voter) {
             case 1:
                 $this->currentValue = $this->getCalcAddingUp();
-                $this->delimiter = '+';
+                $this->delimiter = '+ ';
                 break;
             case 2:
                 $this->currentValue = $this->getCalcSubstract();
-                $this->delimiter = '-';
+                $this->delimiter = '- ';
                 break;
             case 3:
                 $this->currentValue = $this->getCalcMultiply();
-                $this->delimiter = 'x';
+                $this->delimiter = 'x ';
                 break;
             case 4:
                 $this->currentValue = $this->getCalcParts();
-                $this->delimiter = ':';
+                $this->delimiter = ': ';
+                break;
+            case 5:
+                $this->currentValue = $this->getCalcPow();
+                $this->delimiter = '^';
                 break;
         }
 
@@ -77,7 +87,7 @@ class RekenMachine
     }
 
     public function setAction() {
-       $this->action = $this->firstNumber . ' ' . $this->delimiter  . ' ' . $this->lastNumber . ' = ' . $this->currentValue;
+       $this->action = $this->firstNumber . ' ' . $this->delimiter  . '' . $this->lastNumber . ' = ' . $this->currentValue;
 
        return $this->action;
     }
