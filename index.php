@@ -15,36 +15,50 @@
     $_SESSION['aantal'] = isset($_SESSION['aantal']) ? $_SESSION['aantal'] : 0;
 
     if ($_POST && !empty($_POST)) {
-        if ($_POST['firstNumber'] == "" || $_POST['lastNumber'] == "" || $_POST['bewerking'] == "") {
-            if ($_POST['firstNumber'] == '') {
-                $errorFirst = 'Gelieve een waarde in te voeren voor het eerste veld!';
-            }
-            if ($_POST['lastNumber'] == '') {
-                $errorLast = 'Gelieve een waarde in te voeren voor het tweede veld!';
-            }
-            if ($_POST['bewerking'] == '') {
-                $errorBewerking = 'Gelieve een bewerking in te voeren voor het laatse veld!';
-            }
-        } else {
-            $count = $_POST['aantal'];
-            if ($_POST['aantal'] == $_SESSION['aantal']) {
-                $count ++;
-                $_SESSION['aantal'] = $count;
-                $berekening = new RekenMachine();
-                $berekening->id = $_SESSION['aantal'];
-                $berekening->firstNumber = $_POST['firstNumber'];
-                $berekening->lastNumber = $_POST['lastNumber'];
-                $berekening->bewerking = $_POST['bewerking'];
-                $berekening->aantal = $_SESSION['aantal'];
-                $berekening->currentValue = $berekening->calculate($berekening->firstNumber, $berekening->bewerking, $berekening->lastNumber);
-                $_SESSION['currentValue'] = isset($_SESSION['currentValue']) ? $_SESSION['currentValue'] + $berekening->currentValue : $_SESSION['currentValue'];
-                $_SESSION['history'][$_SESSION['aantal']] = array(
-                    'id' => $berekening->id,
-                    'firstNumber' => $berekening->firstNumber,
-                    'lastNumber' => $berekening->lastNumber,
-                    'bewerking' => $berekening->bewerking,
-                    'currentValue' => $berekening->currentValue
-                );
+
+        if (isset($_POST['session_delete'])) {
+            session_destroy();
+            $_SESSION['currentValue'] = 0;
+            $_SESSION['aantal'] = 0;
+        }
+        else {
+
+            if (
+                isset($_POST['firstNumber']) && $_POST['firstNumber'] == "" ||
+                isset($_POST['lastNumber']) && $_POST['lastNumber'] == "" ||
+                isset($_POST['bewerking']) && $_POST['bewerking'] == "") {
+                if ($_POST['firstNumber'] == '') {
+                    $errorFirst = 'Gelieve een waarde in te voeren voor het eerste veld!';
+                }
+                if ($_POST['lastNumber'] == '') {
+                    $errorLast = 'Gelieve een waarde in te voeren voor het tweede veld!';
+                }
+                if ($_POST['bewerking'] == '') {
+                    $errorBewerking = 'Gelieve een bewerking in te voeren voor het laatse veld!';
+                }
+            } else {
+
+                $count = $_POST['aantal'];
+                if ($_POST['aantal'] == $_SESSION['aantal']) {
+                    $count++;
+                    $_SESSION['aantal'] = $count;
+                    $berekening = new RekenMachine();
+                    $berekening->id = $_SESSION['aantal'];
+                    $berekening->firstNumber = $_POST['firstNumber'];
+                    $berekening->lastNumber = $_POST['lastNumber'];
+                    $berekening->bewerking = $_POST['bewerking'];
+                    $berekening->aantal = $_SESSION['aantal'];
+                    $berekening->currentValue = $berekening->calculate($berekening->firstNumber, $berekening->bewerking, $berekening->lastNumber);
+                    $_SESSION['currentValue'] = isset($_SESSION['currentValue']) ? $_SESSION['currentValue'] + $berekening->currentValue : $_SESSION['currentValue'];
+                    $_SESSION['history'][$_SESSION['aantal']] = array(
+                        'id' => $berekening->id,
+                        'firstNumber' => $berekening->firstNumber,
+                        'lastNumber' => $berekening->lastNumber,
+                        'bewerking' => $berekening->bewerking,
+                        'currentValue' => $berekening->currentValue
+                    );
+                }
+
             }
         }
     }
@@ -65,7 +79,10 @@
     </style>
 </head>
     <body>
-
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+        <input type="submit" name="session_delete" value="Delete session">
+        <input type="submit" name="step-back" value="Stap terug">
+    </form>
         <h1>Rekenmachine</h1>
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
             <input type="number" name="firstNumber" placeholder="" min="0" value="<?php echo isset($_POST['firstNumber']) ? $_POST['firstNumber'] : ''; ?>">
@@ -116,16 +133,16 @@
             foreach ($_SESSION['history'] as $key => $value) {
                 switch ($value['bewerking']) {
                     case 1:
-                        echo "{$value['firstNumber']} + {$value['lastNumber']} = {$value['currentValue']} <br>";
+                        echo "{$value['id']}) {$value['firstNumber']} + {$value['lastNumber']} = {$value['currentValue']} <br>";
                         break;
                     case 2:
-                        echo "{$value['firstNumber']} - {$value['lastNumber']} = {$value['currentValue']} <br>";
+                        echo "{$value['id']}) {$value['firstNumber']} - {$value['lastNumber']} = {$value['currentValue']} <br>";
                         break;
                     case 3:
-                        echo "{$value['firstNumber']} x {$value['lastNumber']} = {$value['currentValue']} <br>";
+                        echo "{$value['id']}) {$value['firstNumber']} x {$value['lastNumber']} = {$value['currentValue']} <br>";
                         break;
                     case 4:
-                        echo "{$value['firstNumber']} : {$value['lastNumber']} = {$value['currentValue']} <br>";
+                        echo "{$value['id']}) {$value['firstNumber']} : {$value['lastNumber']} = {$value['currentValue']} <br>";
                         break;
                 }
             }
